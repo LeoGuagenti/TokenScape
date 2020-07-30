@@ -6,6 +6,7 @@ exports.ScapeGoat = function(){
         run: undefined
     };
 
+    // PRIVATE FUNCTIONS
     var runMiddleware = function(){
         if(middlewareFunctions.length > 0){
             middlewareFunctions.forEach(func => {
@@ -17,13 +18,15 @@ exports.ScapeGoat = function(){
     var flattenOptions = function(){
         options.tokenProps.forEach(prop => {
             prop.symbols.forEach(symbol => {
-                options.tokens[symbol] = prop.tokenName
+                options[symbol] = prop.tokenName
             })
         })
         delete options.tokenProps
         console.log(options)
     }
 
+
+    // PUBLIC FUNCTIONS
     this.use = function(middleware){
         if(typeof middleware === "function"){
             middlewareFunctions.push(middleware)
@@ -37,12 +40,10 @@ exports.ScapeGoat = function(){
 
     this.override = function(overrideFunction){
         if(overrideFunction === undefined){
-            console.log('or off')
-            override.status = false;
+            override.status = false; 
             override.run = undefined
         }else{
-            console.log('or on')
-            override.status = true
+            override.status = true; 
             override.run = overrideFunction
         }
     }
@@ -55,18 +56,18 @@ exports.ScapeGoat = function(){
             return
         }
 
+        //container for final tokens
         var parsedTokens = []
-        var properties = options.tokenProps
     
         //splitting procedure
         delimiter = options.delimiter ? options.delimiter : ''
         tokens = stream.split(delimiter)
     
         tokens.forEach(token => {
-            var identifier = options.tokens[token]
+            var identifier = options[token]
             if(identifier){
                 parsedTokens.push({
-                    identifier: options.tokens[token],
+                    identifier: options[token],
                     value: token
                 })
             }else{
@@ -82,7 +83,7 @@ exports.ScapeGoat = function(){
             value: 'EOF'
         })
 
-        if (callback) { callback(null, tokens) }
+        if (callback) { callback(null, parsedTokens) }
 
         //id procedure 
         /*
