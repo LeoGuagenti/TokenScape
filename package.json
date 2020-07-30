@@ -1,0 +1,17 @@
+{
+  "name": "scapegoat",
+  "version": "1.0.0",
+  "description": "Create Tokens from Strings",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "token",
+    "javascript",
+    "string",
+    "scapegoat"
+  ],
+  "author": "Leonardo Guagenti",
+  "license": "MIT"
+}
