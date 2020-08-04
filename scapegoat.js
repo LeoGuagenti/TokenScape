@@ -16,13 +16,26 @@ exports.ScapeGoat = function(){
     }
 
     var flattenOptions = function(){
-        options.tokenProps.forEach(prop => {
-            prop.symbols.forEach(symbol => {
-                options[symbol] = prop.tokenName
+        try{
+            options.tokenProps.forEach(prop => {
+                prop.symbols.forEach(symbol => {
+                    options[symbol] = prop.tokenName
+                })
             })
-        })
-        delete options.tokenProps
-        console.log(options)
+            delete options.tokenProps
+        }catch(err){
+            throw new Error //throw general then specific
+        }
+        
+    }
+        
+    var parseStream = function(stream){
+        var parsedTokens = []
+        for(var index = 0; index < stream.length; index++){
+            //function to eat specific type of data
+        }
+
+        return stream.split(' ')
     }
 
 
@@ -52,7 +65,7 @@ exports.ScapeGoat = function(){
         runMiddleware()
 
         if(override.status){
-            override.run(stream, 0, callback)
+            override.run(stream, callback)
             return
         }
 
@@ -60,8 +73,10 @@ exports.ScapeGoat = function(){
         var parsedTokens = []
     
         //splitting procedure
-        delimiter = options.delimiter ? options.delimiter : ''
-        tokens = stream.split(delimiter)
+        // var delimiter = options.delimiter ? options.delimiter : ''
+        // var tokens = stream.split(delimiter) // create a more dynamic way of doing this
+
+        var tokens = parseStream(stream)
     
         tokens.forEach(token => {
             var identifier = options[token]
@@ -84,28 +99,5 @@ exports.ScapeGoat = function(){
         })
 
         if (callback) { callback(null, parsedTokens) }
-
-        //id procedure 
-        /*
-        tokens.forEach((token, tokenIndex) => {
-            properties.forEach(property => {
-                property.symbols.forEach(symbol => {
-                    if(symbol == token){
-                        tokens[tokenIndex] = {
-                            identifier: property.tokenName,
-                            value: symbol
-                        }
-                    }
-                })
-            })
-    
-            if(tokens[tokenIndex].identifier === undefined && token != ' ' && options.skipWhiteSpace){
-                tokens[tokenIndex] = {
-                    identifier: 'KeyWord',
-                    value: token
-                }
-            }
-        })
-    */
     }
 } 

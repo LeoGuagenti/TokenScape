@@ -1,6 +1,6 @@
 {
   "name": "scapegoat",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Create Tokens from Strings",
   "main": "index.js",
   "scripts": {
