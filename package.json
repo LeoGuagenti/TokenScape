@@ -1,9 +1,10 @@
 {
-  "name": "scapegoat",
-  "version": "1.0.1",
+  "name": "tokenscape",
+  "version": "1.1.1",
   "description": "Create Tokens from Strings",
   "main": "index.js",
   "scripts": {
+    "start": "node ./tests/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [
