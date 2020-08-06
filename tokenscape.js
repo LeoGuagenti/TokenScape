@@ -67,10 +67,8 @@ exports.TokenScape = function(){
                     identifier: options[stream[charIndex]],
                     value: stream[charIndex]
                 })
-                continue
             }else{
                 currentToken += stream[charIndex]
-                continue
             }
         }
 
