@@ -1,4 +1,5 @@
 # TokenScape
+![tokenscape version](https://img.shields.io/badge/npm-v1.1.2-blue)
 ## Description
 TokenScape is a small npm package that allows you to break a string into chuncks (tokens) by defining token types and what they represent. Examples of usage are show below.
 ## Installation
