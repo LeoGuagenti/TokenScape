@@ -7,6 +7,16 @@ exports.TokenScape = function(){
     };
 
     // PRIVATE FUNCTIONS
+
+    //token object template
+    var Token = function(identifier, value){
+        return {
+            identifier: identifier,
+            value: value
+        }
+    }
+
+    //runs each middleware function in the order they were added
     var runMiddleware = function(){
         if(middlewareFunctions.length > 0){
             middlewareFunctions.forEach(func => {
@@ -15,6 +25,7 @@ exports.TokenScape = function(){
         }
     }
 
+    //converts multi-level object into a "dictionary" for easy lookups
     var flattenOptions = function(){
         try{
             options.tokenProps.forEach(prop => {
@@ -24,11 +35,15 @@ exports.TokenScape = function(){
             })
             delete options.tokenProps
         }catch(err){
-            throw new Error //throw general then specific
+            return new Error(`A problem was encountered while trying to flatten token properties\n ${err}`)
         }
         
     }
-        
+    
+    /** Breaks a string into "chunks" (tokens)
+     * @param {string} stream string any string that will be broken into tokens based on the default tokenify function
+     * @return an array of token objects
+    */
     var parseStream = function(stream){
         var parsedTokens = []
         var currentToken = ''
@@ -37,16 +52,10 @@ exports.TokenScape = function(){
         for(charIndex; charIndex < stream.length; charIndex++){
             if(stream[charIndex] == options.delimiter || stream[charIndex] == '\n' || stream[charIndex] == '\t'){
                 if(options.hasOwnProperty(currentToken)){
-                    parsedTokens.push({
-                        identifier: options[currentToken],
-                        value: currentToken
-                    })
+                    parsedTokens.push(Token(options[currentToken], currentToken))
                 }else{
                     if(currentToken != ''){
-                        parsedTokens.push({
-                            identifier: options.defaultToken,
-                            value: currentToken
-                        })
+                        parsedTokens.push(Token(options.defaultToken, currentToken))
                     }
                 }
 
@@ -56,27 +65,18 @@ exports.TokenScape = function(){
 
             if(options.hasOwnProperty(stream[charIndex])){
                 if(currentToken != ''){
-                    parsedTokens.push({
-                        identifier: options.defaultToken,
-                        value: currentToken
-                    })
+                    parsedTokens.push(Token(options.defaultToken, currentToken))
                     currentToken = ''
                 }
                 
-                parsedTokens.push({
-                    identifier: options[stream[charIndex]],
-                    value: stream[charIndex]
-                })
+                parsedTokens.push(Token(options[stream[charIndex]], stream[charIndex]))
             }else{
                 currentToken += stream[charIndex]
             }
         }
 
         if(currentToken != ''){
-            parsedTokens.push({
-                identifier: options.defaultToken,
-                value: currentToken
-            })
+            parsedTokens.push(Token(options.defaultToken, currentToken))
         }
 
         return parsedTokens
@@ -84,6 +84,10 @@ exports.TokenScape = function(){
 
 
     // PUBLIC FUNCTIONS
+    /**
+     * Adds a middlware function to the pipeline or sets configuration.
+     * @param {object / function} middleware an object that will serve as middleware or general configuration
+     */
     this.use = function(middleware){
         if(typeof middleware === "function"){
             middlewareFunctions.push(middleware)
@@ -95,6 +99,11 @@ exports.TokenScape = function(){
         }
     }
 
+    /**
+     * Toggles a tokenify override function that may be user defined.
+     * If not provided with an override function, the default tokenify function is used
+     * @param {function} overrideFunction the function that overrides the defualt tokenify function
+     */ 
     this.override = function(overrideFunction){
         if(overrideFunction === undefined){
             override.status = false; 
@@ -105,23 +114,47 @@ exports.TokenScape = function(){
         }
     }
 
+    /**
+     * Breaks a string into "chunks" (tokens) then returns the tokens in the form of a callback or promise
+     * @param {string} stream an expression to be turned into tokens
+     * @param {function} callback a function to be ran after completion of the tokenify function
+     */
     this.tokenify = function(stream, callback){
         runMiddleware()
-
-        if(override.status){
-            override.run(stream, callback)
-            return
-        }
-
-        var tokens = parseStream(stream)
-
-        if(options.eof){
-            tokens.push({
-                identifier: 'EOF', 
-                value: 'EOF'
-            })
-        }
         
-        if (callback) { callback(null, tokens) }
+        const promise = new Promise((resolve, reject) => {
+            try{
+                var tokens = [];
+                if(override.status){
+                    tokens = override.run(stream)
+                }else{
+                    tokens = parseStream(stream)
+                }
+
+                if(options.eof){
+                    tokens.push({
+                        identifier: 'EOF', 
+                        value: 'EOF'
+                    })
+                }
+
+                resolve(tokens)
+            }catch(error){
+                reject(error)
+            }
+        })
+
+        if (callback && typeof callback == 'function') {
+            promise.then(
+                tokens => {
+                    callback(null, tokens)
+                }, 
+                err => {
+                    callback(err, null)
+                }
+            )
+        }else{
+            return promise
+        }
     }
 } 
