@@ -1,5 +1,5 @@
 # TokenScape
-![tokenscape version](https://img.shields.io/badge/npm-v1.2.0-blue)
+![tokenscape version](https://img.shields.io/badge/npm-v1.2.1-blue)
 ## Description
 TokenScape is a small npm package that allows you to break a string into chuncks (tokens) by defining token types and what they represent. Examples of usage are show below.
 ## Installation
@@ -9,7 +9,7 @@ npm i tokenscape
 ## Usage
 You may use this package in your project by using the following:
 ```javascript
-const { TokenScape } = require('../tokenscape')
+const { TokenScape } = require('tokenscape')
 var tokenscape = new TokenScape()
 ```
 
@@ -93,7 +93,7 @@ tokenscape.use(() => {
 })
 
 tokenscape.use(() => {
-    console.log('middleware function! #1')
+    console.log('middleware function! #2')
 })
 ```
 Middleware functions are run in order by with they are 'added' to TokenScape. The resulting output if the above middleware functions would be:
