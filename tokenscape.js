@@ -95,7 +95,7 @@ exports.TokenScape = function(){
             options = middleware
             flattenOptions()
         }else{
-            throw new Error('Invalid middleware, must be an object or function')
+            throw new Error('Invalid middleware, must be an valid object or function')
         }
     }
 

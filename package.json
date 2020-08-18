@@ -1,6 +1,6 @@
 {
   "name": "tokenscape",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Create Tokens from Strings",
   "main": "index.js",
   "scripts": {
